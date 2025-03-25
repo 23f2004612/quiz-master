@@ -39,6 +39,7 @@ class QuizForm(FlaskForm):
 
 class QuestionForm(FlaskForm):
     chapter_id = SelectField('Chapter', coerce=int, validators=[DataRequired()])
+    quiz_id = SelectField('Quiz', coerce=int, validators=[DataRequired()])  
     title = StringField('Question Title', validators=[DataRequired()])
     statement = TextAreaField('Question Statement', validators=[DataRequired()])
     option1 = StringField('Option 1', validators=[DataRequired()])

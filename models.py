@@ -48,6 +48,8 @@ class Quiz(db.Model):
     duration = db.Column(db.Integer, nullable=False)
     questions = db.relationship('Question', backref='quiz', lazy=True)
 
+    chapter = db.relationship('Chapter', backref=db.backref('quizzes', lazy=True))
+
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
