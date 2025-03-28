@@ -1,19 +1,22 @@
 
 
-from flask import Flask, render_template, redirect, url_for, flash, request
+from random import shuffle
+from flask import Flask, render_template, redirect, session, url_for, flash, request
 from flask_login import current_user, login_required, logout_user
 from flask_login import LoginManager
 from flask import render_template, flash, redirect, url_for, request
+from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 from flask_migrate import Migrate
 from datetime import datetime
 from auth import auth
-from models import db, User, ActiveSession, Subject, Chapter, Quiz, Question
+from models import db, User, ActiveSession, Subject, Chapter, Quiz, Question,Score
 from forms import SubjectForm,ChapterForm,QuizForm,QuestionForm
 from subject_CUD import sub_bp
 from chapter_CUD import chap_bp
 from quiz_CUD import quiz_bp
 from question_CUD import ques_bp
+from quiz_handling import quiz_handle_auth
 
 
 # Initialize app and db
@@ -28,6 +31,7 @@ app.register_blueprint(sub_bp, url_prefix="/sub_auth")
 app.register_blueprint(chap_bp, url_prefix="/chap_auth")
 app.register_blueprint(quiz_bp, url_prefix="/quiz_auth")
 app.register_blueprint(ques_bp, url_prefix="/ques_auth")
+app.register_blueprint(quiz_handle_auth, url_prefix="/quiz_handle_auth")
 
 migrate = Migrate(app, db)
 
@@ -71,16 +75,41 @@ def admin_dashboard():
 def user_dashboard():
     if current_user.role != 'user':
         flash('You must be a user to access this page.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
+    
+    
+    quiz_attempts = Score.query.filter_by(user_id=current_user.id).all()
+    attempted_quiz_ids = {attempt.quiz_id for attempt in quiz_attempts}
 
-    # User-specific content goes here
-    return render_template('user_dashboard.html')
+    upcoming_quizzes = Quiz.query.all()
+
+    quizzes_with_questions = []
+    for quiz in upcoming_quizzes:
+        question_count = Question.query.filter_by(quiz_id=quiz.id).count()
+        is_attempted = quiz.id in attempted_quiz_ids
+        score = None
+
+        if is_attempted:
+            attempt = next((attempt for attempt in quiz_attempts if attempt.quiz_id == quiz.id), None)
+            if attempt:
+                score = attempt.score
+            
+            
+        quizzes_with_questions.append({
+            "id": quiz.id,
+            "chapter_id": quiz.chapter_id,
+            "date": quiz.date.strftime('%Y-%m-%d'),
+            "duration": quiz.duration,
+            "num_questions": question_count,
+            "attempted": is_attempted,
+            "score": score
+        })
+    return render_template('user_dashboard.html',quizzes = quizzes_with_questions)
 
 
 if __name__ == "__main__":
     with app.app_context():
-        db.drop_all()
-        db.create_all()  # Ensure tables are created before adding users
+          # Ensure tables are created before adding users
         
         admin = User.query.filter_by(username='admin').first()
         if not admin:  # Avoid duplicate entries
@@ -95,7 +124,16 @@ if __name__ == "__main__":
             db.session.add(admin)
             db.session.commit()
             print("Admin user created successfully!")
-        else:
-            print("Admin user already exists.")
-
+    
+            user1 = User(
+                username='kaushik',
+                password=generate_password_hash('kaushik123'),  # Use hashed password
+                name='Kaushik',
+                qualification='N/A',
+                dob=datetime.strptime('2005-04-08', '%Y-%m-%d').date(),
+                role='user'  # Ensure lowercase 'admin' as per your form choices
+                )
+        
+            db.session.add(user1)
+            db.session.commit()
     app.run(debug=True)
