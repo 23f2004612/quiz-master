@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Welcome {{ current_user.username }}</a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user_dashboard') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('quiz_handle_auth.scores') }}">Scores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+
+        <section class="mb-6">
+            <div class="row gap-6">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="mb-3">Quiz Summary</h3>
+                            
+                            <div class="detail-item">
+                                <span class="detail-key">Total Attempted Quizzes:</span>
+                                <span class="detail-value">{{ total_attempted_quizzes }}</span>
+                            </div>
+        
+                            <div class="detail-item">
+                                <span class="detail-key">Average Score:</span>
+                                <span class="detail-value">{{ average_score }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Feedback</h5>
+                <ul>
+                    {% for feedback in feedback_list %}
+                        <li>{{ feedback }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quiz History Section -->
+        <section class="mb-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="mb-3">Quiz History</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Subject Name</th>
+                                    <th>Chapter Name</th>
+                                    <th>Attempted Time</th>
+                                    <th>Duration</th>
+                                    <th>Total Questions</th>
+                                    <th>Score</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score in attempts %}
+                                <tr>
+                                    <td>{{ score.subject_name }}</td>
+                                    <td>{{ score.chapter_name }}</td>
+                                    <td>{{ score.date_attempted }}</td>
+                                    <td>{{ score.duration }} mins</td>
+                                    <td>{{ score.total_questions }}</td>
+                                    <td>{{ score.score }} / {{ score.total_questions }}</td>
+        
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
