@@ -1,0 +1,15 @@
+# Ignore the SQLite database file
+database.db
+
+# Ignore the migrations folder
+migrations/
+
+# Ignore environment variables file
+.env
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment folder
+venv/
