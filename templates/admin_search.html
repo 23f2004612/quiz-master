@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Welcome Admin</a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_search.admin_search_page') }}">Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_sum.admin_summary') }}">Summary</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('quiz_auth.list_quizzes') }}">Quiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">        
+        <form method="post" class="mb-4">
+            
+            <div class="form-group">
+                <label for="search_type">Search Type</label>
+                <select id="search_type" name="search_type" class="form-control" required>
+                    <option value="users">Users</option>
+                    <option value="subjects">Subjects</option>
+                    <option value="quizzes">Quizzes</option>
+                    <option value="questions">Questions</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="query">Query</label>
+                <input type="text" id="query" name="query" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+       
+        {% if users %}
+            <h3>Users</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>User Name</th>
+                        <th>Qualification</th>
+                        <th>Date of Birth</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.qualification or 'N/A' }}</td>
+                            <td>{{ user.dob.strftime('%Y-%m-%d') if user.dob else 'N/A' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+
+        {% if subjects %}
+        <h3>Subjects</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subject ID</th>
+                    <th>Subject Name</th>
+                    <th>Description</th>
+                    <th>Chapters</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for subject in subjects %}
+                    <tr>
+                        <td>{{ subject.id}}</td>
+                        <td>{{ subject.name }}</td>
+                        <td>{{ subject.description or 'N/A' }}</td>
+                        <td>
+                            {% for chapter in subject.chapters %}
+                                {{ chapter.name }}<br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% endif %}
+
+
+        {% if quizzes %}
+            <h3>Quizzes</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Quiz ID</th>
+                        <th>Chapter</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Duration (minutes)</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for quiz in quizzes %}
+                        <tr>
+                            <td>{{ quiz.id }}</td>
+                            <td>{{ quiz.chapter_id }}</td>  <!-- Assumes chapter relationship exists -->
+                            <td>{{ quiz.subject_id }}</td>  <!-- Assumes subject relationship exists -->
+                            <td>{{ quiz.date.strftime('%Y-%m-%d') }}</td>  <!-- Formats the date -->
+                            <td>{{ quiz.duration }}</td>  <!-- Displays duration -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        {% endif %}
+
+
+
+        {% if questions %}
+            <h3>Questions</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Quiz ID</th>
+                        <th>Title</th>
+                        <th>Chapter</th>
+                        
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for question in questions %}
+                        <tr>
+                            <td>{{ question.id }}</td> 
+                            <td>{{ question.quiz_id }}</td> 
+                            <td>{{ question.title }}</td>  
+                            <td>{{ question.chapter.name }}</td>
+                            
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

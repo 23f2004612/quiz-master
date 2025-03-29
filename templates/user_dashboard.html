@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,9 @@
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('user_dashboard') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user_search.search_quiz') }}">Search</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('quiz_handle_auth.scores') }}">Scores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user_sum.user_summary') }}">Summary</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
                 </ul>
             </div>
@@ -28,22 +31,20 @@
             <table class="table table-striped mt-4">
                 <thead>
                     <tr>
-                        <th>Quiz ID</th>
-                        <th>Chapter ID</th>
+                        <th>ID</th>
+                        <th>Subject Name</th>
+                        <th>Chapter Name</th>
                         <th>Date</th>
-                        <th>Duration (min)</th>
-                        <th>No.of Questions</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for quiz in quizzes %}
                         <tr>
-                            <td>{{ quiz.id }}</td>
-                            <td>{{ quiz.chapter_id }}</td>  
+                            <td>{{ quiz.id  }}</td>
+                            <td>{{ quiz.subject_name }}</td>
+                            <td>{{ quiz.chapter_name }}</td>
                             <td>{{ quiz.date }}</td>
-                            <td>{{ quiz.duration }}</td>
-                            <td>{{ quiz.num_questions }}</td>
                             <td>
                                 <a href="{{ url_for('quiz_handle_auth.view_quiz', id=quiz.id) }}" class="btn btn-info btn-sm">
                                     View 
