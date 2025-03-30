@@ -5,6 +5,13 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
+
+'''
+User Model
+Represents users in the system, storing details like username, password, name, qualification, date of birth, and role.
+Provides authentication and role-based access.'
+'''
+
 class User(db.Model, UserMixin):
     
     id = db.Column(db.Integer, primary_key=True)  # `id` is now the primary key
@@ -14,7 +21,13 @@ class User(db.Model, UserMixin):
     qualification = db.Column(db.String(120), nullable=True)
     dob = db.Column(db.Date, nullable=True)  # Date of Birth
     role = db.Column(db.String(20), nullable=False, default='user')
-    
+
+'''
+ActiveSession Model
+Tracks active user sessions with timestamps and roles.
+Used for session management and monitoring.
+
+'''
 class ActiveSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -23,6 +36,12 @@ class ActiveSession(db.Model):
 
     user = db.relationship('User', backref='active_sessions', lazy=True)
 
+"""
+Subject & Chapter Models
+
+Organizes subjects and their related chapters.
+Establishes a one-to-many relationship between subjects and chapters.
+"""
 
 class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +57,11 @@ class Chapter(db.Model):
     questions = db.relationship('Question', backref='chapter', lazy=True)
     quizzes = db.relationship('Quiz', backref='chapter', lazy=True)
 
+'''
+Quiz Model
+Represents quizzes linked to specific subjects and chapters.
+Stores quiz details such as date, duration, and questions associated.
+'''
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id', name="fk_quiz_chapter"), nullable=False)
@@ -46,6 +70,12 @@ class Quiz(db.Model):
     duration = db.Column(db.Integer, nullable=False)
     questions = db.relationship('Question', backref='quiz', lazy=True)
 
+
+'''
+Question Model
+Stores questions, options, and the correct answer.
+Linked to specific quizzes and chapters.
+'''
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -58,7 +88,12 @@ class Question(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
 
+'''
+Score Model
+Stores quiz results for each user, including score, total questions, and date attempted.
+Facilitates score tracking and quiz performance analysis.
 
+'''
 class Score(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
