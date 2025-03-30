@@ -1,0 +1,138 @@
+paths: {}
+info:
+  title: Quizmaster API
+  version: 1.0.0
+openapi: 3.0.3
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        dob:
+          type: string
+          format: date
+          nullable: true
+        role:
+          type: string
+          maxLength: 20
+        qualification:
+          type: string
+          maxLength: 120
+          nullable: true
+        password:
+          type: string
+          maxLength: 20
+        name:
+          type: string
+          maxLength: 120
+        username:
+          type: string
+          maxLength: 120
+        id:
+          type: integer
+      required:
+      - name
+      - password
+      - username
+    ActiveSession:
+      type: object
+      properties:
+        role:
+          type: string
+          maxLength: 20
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+        id:
+          type: integer
+      required:
+      - role
+    Subject:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        id:
+          type: integer
+        description:
+          type: string
+          nullable: true
+      required:
+      - name
+    Chapter:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        id:
+          type: integer
+        description:
+          type: string
+          nullable: true
+      required:
+      - name
+    Quiz:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+        id:
+          type: integer
+      required:
+      - date
+      - duration
+    Question:
+      type: object
+      properties:
+        option1:
+          type: string
+          maxLength: 100
+        statement:
+          type: string
+        option2:
+          type: string
+          maxLength: 100
+        title:
+          type: string
+          maxLength: 255
+        correct_option:
+          type: string
+          maxLength: 100
+        option4:
+          type: string
+          maxLength: 100
+        option3:
+          type: string
+          maxLength: 100
+        id:
+          type: integer
+      required:
+      - correct_option
+      - option1
+      - option2
+      - option3
+      - option4
+      - statement
+      - title
+    Score:
+      type: object
+      properties:
+        date_attempted:
+          type: string
+          format: date-time
+          nullable: true
+        total_questions:
+          type: integer
+        id:
+          type: integer
+        score:
+          type: integer
+      required:
+      - score
+      - total_questions
